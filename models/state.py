@@ -1,41 +1,30 @@
 #!/usr/bin/python3
-"""This is the state class"""
-import models
+"""
+    Implementation of the State class
+"""
 from models.base_model import BaseModel, Base
-from models.city import City
+from sqlalchemy import Column, String
 from os import getenv
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 
+storage_type = getenv("HBNB_TYPE_STORAGE")
 
 class State(BaseModel, Base):
-    """This is the class for State
+    """Class for the states table."""
 
-    Attributes:
-        name: input name
+    __tablename__ = 'states'
+    name = Column(String(128), nullable=False)
+    # Add the primary key
+    id = Column(String(60), primary_key=True, nullable=False)
 
-    """
-
-    __tablename__ = "states"
-
-    if getenv('HBNB_TYPE_STORAGE') == 'db':
-        name = Column(String(128), nullable=False)
-        cities = relationship('City', backref='state',
-                              cascade='all, delete-orphan')
-    else:
-        name = ''
-
+    # Define the relationship as a string argument
+    if storage_type != 'db':
         @property
         def cities(self):
-            """Returns the list of `City` instances
-            with `state_id` equals to the current
-            """
+            """Return the list of City objects from storage linked to the current State."""
+            all_cities = models.storage.all("City")  # Use "City" as a string argument
+            state_cities = [city for city in all_cities.values() if city.state_id == self.id]
+            return state_cities
 
-            cities = list()
+# Do NOT include the cities relationship here
 
-            for _id, city in models.storage.all(City).items():
-                if city.state_id == self.id:
-                    cities.append(city)
 
-            return cities
