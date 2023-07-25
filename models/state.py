@@ -5,7 +5,6 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-from models.city import City
 from os import getenv
 import models
 
@@ -38,3 +37,4 @@ class State(BaseModel, Base):
                 if city_obj.state_id == self.id:
                     list_cities.append(city_obj)
             return list_cities
+from models.city import City
