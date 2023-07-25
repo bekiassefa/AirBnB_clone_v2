@@ -17,7 +17,7 @@ class State(BaseModel, Base):
     @property
     def cities(self):
         """getter attribute cities that returns the list of City"""
-        from models import storage
+        from models import storage  # Move the import statement here
         my_list = []
         extracted_cities = storage.all(City).values()
         for city in extracted_cities:
